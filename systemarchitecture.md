@@ -8,7 +8,7 @@ SentryGate is built upon a modern, three-tier architecture that prioritizes secu
 
 ## Architecture Overview
 
-<figure><img src=".gitbook/assets/Screenshot 2026-01-30 165322.png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/Screenshot 2026-01-30 171153.png" alt=""><figcaption></figcaption></figure>
 
 {% stepper %}
 {% step %}

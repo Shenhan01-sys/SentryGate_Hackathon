@@ -66,7 +66,7 @@ SentryGate's Solution:
 Implementation reference:
 
 ```
-file:///c:/Users/hansg/HansProject/SentryGate_Hackathon/SC/SentryGuard_SmartContracts/src/SentryGate.sol#L22-L27
+/src/SentryGate.sol#L22-L27
 ```
 {% endhint %}
 {% endstep %}
@@ -96,8 +96,8 @@ SentryGate's Solution:
 Implementation references:
 
 ```
-file:///c:/Users/hansg/HansProject/SentryGate_Hackathon/SC/SentryGuard_SmartContracts/src/SentryGate.sol#L24
-file:///c:/Users/hansg/HansProject/SentryGate_Hackathon/SC/SentryGuard_SmartContracts/src/SentryGate.sol#L26
+/src/SentryGate.sol#L24
+/src/SentryGate.sol#L26
 ```
 {% endhint %}
 {% endstep %}
