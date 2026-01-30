@@ -517,6 +517,8 @@ PORT=5003 npm run dev
 * **Base Docs**: [docs.base.org](https://docs.base.org/)
 * **IPFS Docs**: [docs.ipfs.tech](https://docs.ipfs.tech/)
 * **Pinata Docs**: [docs.pinata.cloud](https://docs.pinata.cloud/)
+* **Base Mini Apps:** [docs.base.miniapps](https://docs.base.org/mini-apps/quickstart/migrate-existing-apps)
+* **Base OnChainKit Library:** [docs.base.onchainkit](https://docs.base.org/onchainkit/latest/getting-started/overview)
 
 ***
 
