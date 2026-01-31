@@ -1,16 +1,18 @@
 ---
-icon: network-wired
+icon: diagram-project
 ---
 
-# API\_Reference
+# API Reference
 
 Complete documentation of all API endpoints provided by the SentryGate Express.js backend server.
 
-**Backend Implementation**: [`index.js`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d)
+**Backend Implementation**: [`index.js`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1)
 
 **Server Port**: 5000 (configurable via `PORT` env variable)
 
-Base URL
+***
+
+## Base URL
 
 ```
 http://localhost:5000
@@ -40,13 +42,13 @@ For production: Replace with deployed backend URL
 
 Check if the backend server is running.
 
-Request
+### Request
 
 ```http
 GET /
 ```
 
-Response
+### Response
 
 ```json
 {
@@ -55,7 +57,7 @@ Response
 }
 ```
 
-**Implementation**: [`index.js:83-85`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d#L83-L85)
+**Implementation**: [`index.js:83-85`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L83-L85)
 
 ***
 
@@ -63,13 +65,13 @@ Response
 
 Retrieve deployed smart contract addresses for frontend initialization.
 
-Request
+### Request
 
 ```http
 GET /api/config
 ```
 
-Response
+### Response
 
 ```json
 {
@@ -77,7 +79,7 @@ Response
 }
 ```
 
-**Implementation**: [`index.js:88-90`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d#L88-L90)
+**Implementation**: [`index.js:88-90`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L88-L90)
 
 **Use Case**: Frontend fetches this on load to connect to the correct SentryGate contract.
 
@@ -87,25 +89,25 @@ Response
 
 Verify if a wallet has active subscription or upload credits.
 
-Request
+### Request
 
 ```http
 GET /api/status/:walletAddress
 ```
 
-Parameters:
+**Parameters**:
 
 * `walletAddress` (path) - Ethereum address (0x...)
 
-Example
+### Example
 
 ```bash
 curl http://localhost:5000/api/status/0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
 ```
 
-Response
+### Response
 
-Active:
+**Active**:
 
 ```json
 {
@@ -113,7 +115,7 @@ Active:
 }
 ```
 
-Inactive:
+**Inactive**:
 
 ```json
 {
@@ -121,17 +123,17 @@ Inactive:
 }
 ```
 
-**Implementation**: [`index.js:93-97`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d#L93-L97)
+**Implementation**: [`index.js:93-97`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L93-L97)
 
-**Logic**: Calls [`checkX402Status()`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d#L65-L76) which queries `sentryContract.verifyPayment(walletAddress)`
+**Logic**: Calls [`checkX402Status()`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L65-L76) which queries `sentryContract.verifyPayment(walletAddress)`
 
 ***
 
-## 4. Gasless Faucet
+## 4. Gasless Faucet 🆕
 
-Mint IDRX tokens directly to user's wallet (testnet only). Limited to one claim per address.
+Mint IDRX tokens directly to user's wallet (testnet only). Limited to **one claim per address**.
 
-Request
+### Request
 
 ```http
 POST /api/faucet
@@ -142,9 +144,9 @@ Content-Type: application/json
 }
 ```
 
-Response
+### Response
 
-Success:
+**Success**:
 
 ```json
 {
@@ -153,7 +155,7 @@ Success:
 }
 ```
 
-Already Claimed:
+**Already Claimed**:
 
 ```json
 {
@@ -161,9 +163,9 @@ Already Claimed:
 }
 ```
 
-**Implementation**: [`index.js:100-127`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d#L100-L127)
+**Implementation**: [`index.js:100-127`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L100-L127)
 
-Details:
+**Details**:
 
 * Amount: 1,000,000 IDRX (1 million tokens with 2 decimals)
 * Uses admin wallet to mint tokens gaslessly
@@ -176,9 +178,9 @@ Details:
 
 Upload encrypted document to IPFS and store metadata in database.
 
-⚠️ Requires x402 authorization (active subscription OR upload credits)
+**⚠️ Requires x402 authorization** (active subscription OR upload credits)
 
-Request
+### Request
 
 ```http
 POST /api/upload
@@ -191,7 +193,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-Example (JavaScript)
+### Example (JavaScript)
 
 ```javascript
 const formData = new FormData();
@@ -205,18 +207,18 @@ const response = await fetch('http://localhost:5000/api/upload', {
 });
 ```
 
-Response
+### Response
 
-Success:
+**Success**:
 
 ```json
 {
   "success": true,
-  "cid": "QmXyZ..." 
+  "cid": "QmXyZ..."
 }
 ```
 
-Payment Required:
+**Payment Required**:
 
 ```json
 {
@@ -224,39 +226,39 @@ Payment Required:
 }
 ```
 
-HTTP Status: 402
+_HTTP Status: 402_
 
-**Implementation**: [`index.js:130-168`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d#L130-L168)
+**Implementation**: [`index.js:130-168`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L130-L168)
 
-Flow
+Flow:
 
 {% stepper %}
 {% step %}
 ### Validate x402 status
 
-Call [`checkX402Status()`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d#L65-L76) to ensure the wallet has an active subscription or credits.
+Call the on-chain verification via [`checkX402Status()`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L65-L76). If not authorized, return 402 Payment Required.
 {% endstep %}
 
 {% step %}
-### Upload to Pinata IPFS
+### Upload to IPFS (Pinata)
 
-Send the file as FormData via Axios to Pinata. Receive the resulting CID.
+Send the file as FormData to Pinata via Axios. Receive CID from Pinata.
 {% endstep %}
 
 {% step %}
-### Store metadata
+### Store metadata in DB
 
-Insert a record into MySQL `documents` table with owner address, CID, filename, and category.
+Insert a record into MySQL `documents` table with owner\_address, cid, filename, category.
 {% endstep %}
 
 {% step %}
 ### Return CID
 
-Respond to the frontend with the CID.
+Respond to the frontend with the CID and success status.
 {% endstep %}
 {% endstepper %}
 
-Database Record:
+**Database Record**:
 
 ```sql
 INSERT INTO documents (owner_address, cid, filename, category) 
@@ -269,9 +271,9 @@ VALUES ('0x742d...', 'QmXyZ...', 'document.enc', 'KTP');
 
 Analyze document using Google Gemini 2.5 Flash AI for compliance and risk assessment.
 
-⚠️ Requires x402 authorization
+**⚠️ Requires x402 authorization**
 
-Request
+### Request
 
 ```http
 POST /api/scan
@@ -283,9 +285,9 @@ Content-Type: multipart/form-data
 }
 ```
 
-Response
+### Response
 
-Success:
+**Success**:
 
 ```json
 {
@@ -298,11 +300,11 @@ Success:
 }
 ```
 
-**Implementation**: [`index.js:171-196`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d#L171-L196)
+**Implementation**: [`index.js:171-196`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L171-L196)
 
-AI Model: `gemini-2.5-flash` with JSON response format
+**AI Model**: `gemini-2.5-flash` with JSON response format
 
-Prompt:
+**Prompt**:
 
 ```
 Analisis dokumen ini. Output JSON valid: 
@@ -313,7 +315,7 @@ Analisis dokumen ini. Output JSON valid:
 }
 ```
 
-Use Case: Pre-upload verification to ensure document quality and detect sensitive information before encryption and storage.
+**Use Case**: Pre-upload verification to ensure document quality and detect sensitive information before encryption and storage.
 
 ***
 
@@ -321,23 +323,23 @@ Use Case: Pre-upload verification to ensure document quality and detect sensitiv
 
 Retrieve all documents uploaded by a specific wallet address.
 
-Request
+### Request
 
 ```http
 GET /api/documents/:walletAddress
 ```
 
-Parameters:
+**Parameters**:
 
 * `walletAddress` (path) - Ethereum address (0x...)
 
-Example
+### Example
 
 ```bash
 curl http://localhost:5000/api/documents/0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
 ```
 
-Response
+### Response
 
 ```json
 {
@@ -363,9 +365,9 @@ Response
 }
 ```
 
-**Implementation**: [`index.js:199-209`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d#L199-L209)
+**Implementation**: [`index.js:199-209`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L199-L209)
 
-SQL Query:
+**SQL Query**:
 
 ```sql
 SELECT * FROM documents 
@@ -379,7 +381,9 @@ ORDER BY created_at DESC
 
 <details>
 
-<summary>400 Bad Request</summary>
+<summary>Common error responses</summary>
+
+#### 400 Bad Request
 
 ```json
 {
@@ -387,11 +391,7 @@ ORDER BY created_at DESC
 }
 ```
 
-</details>
-
-<details>
-
-<summary>402 Payment Required</summary>
+#### 402 Payment Required
 
 ```json
 {
@@ -399,11 +399,7 @@ ORDER BY created_at DESC
 }
 ```
 
-</details>
-
-<details>
-
-<summary>403 Forbidden</summary>
+#### 403 Forbidden
 
 ```json
 {
@@ -411,11 +407,7 @@ ORDER BY created_at DESC
 }
 ```
 
-</details>
-
-<details>
-
-<summary>500 Internal Server Error</summary>
+#### 500 Internal Server Error
 
 ```json
 {
@@ -431,14 +423,14 @@ ORDER BY created_at DESC
 
 ### x402 Middleware
 
-The backend implements a Gatekeeper pattern for restricted endpoints.
+The backend implements a **Gatekeeper pattern** for restricted endpoints.
 
-Protected Endpoints:
+**Protected Endpoints**:
 
 * `POST /api/upload`
 * `POST /api/scan`
 
-Verification Logic: [`checkX402Status()`](/broken/pages/2f4f0bb493051be3876f919e859224405c1bb53d#L65-L76)
+**Verification Logic** [`checkX402Status()`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L65-L76):
 
 ```javascript
 async function checkX402Status(walletAddress) {
@@ -450,7 +442,7 @@ async function checkX402Status(walletAddress) {
 }
 ```
 
-On-Chain Verification:
+**On-Chain Verification**:
 
 * Calls `SentryGate.verifyPayment(address)` on Base Sepolia
 * Returns `(bool isActive, uint256 expiry, uint256 credits)`
@@ -486,7 +478,7 @@ CREATE TABLE faucet_claims (
 );
 ```
 
-Migration: Run [`migrate.js`](/broken/pages/6a4c1193671558aa40f7a1acd7bafc5d3e0a6f59)
+**Migration**: Run [`migrate.js`](/broken/pages/d189efcd577a2767d7aba006e35cf4c9d61d0190)
 
 ***
 
@@ -521,41 +513,21 @@ DB_NAME=gatesentry
 
 ## Running the Server
 
-{% stepper %}
-{% step %}
-### Install dependencies
-
 ```bash
+# Install dependencies
 npm install
-```
-{% endstep %}
 
-{% step %}
-### Run database migration
-
-```bash
+# Run database migration
 npm run migrate
-```
-{% endstep %}
 
-{% step %}
-### Start development server (with nodemon)
-
-```bash
+# Start development server (with nodemon)
 npm run dev
-```
-{% endstep %}
 
-{% step %}
-### Start production server
-
-```bash
+# Start production server
 npm start
 ```
-{% endstep %}
-{% endstepper %}
 
-Dependencies ([`package.json`](/broken/pages/30e604515a1a719bb3f87bb4e105f560538527fe)):
+**Dependencies** ([`package.json`](/broken/pages/71010ba9f7bf25e13e623e4b53c7b3aabdc7def8)):
 
 * express: ^5.2.1
 * cors: ^2.8.6
@@ -570,13 +542,13 @@ Dependencies ([`package.json`](/broken/pages/30e604515a1a719bb3f87bb4e105f560538
 
 ## Testing Examples
 
-Test Health Check
+### Test Health Check
 
 ```bash
 curl http://localhost:5000/
 ```
 
-Test Faucet
+### Test Faucet
 
 ```bash
 curl -X POST http://localhost:5000/api/faucet \
@@ -584,13 +556,13 @@ curl -X POST http://localhost:5000/api/faucet \
   -d '{"walletAddress":"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"}'
 ```
 
-Test Status Check
+### Test Status Check
 
 ```bash
 curl http://localhost:5000/api/status/0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
 ```
 
-Test Upload (with file)
+### Test Upload (with file)
 
 ```bash
 curl -X POST http://localhost:5000/api/upload \
@@ -603,15 +575,13 @@ curl -X POST http://localhost:5000/api/upload \
 
 ## Security Notes
 
-{% hint style="info" %}
-1. No Encryption Keys Stored: Backend never sees decryption keys
-2. x402 Verification: Every upload/scan validated against blockchain
-3. One-Time Faucet: Prevents abuse via database uniqueness constraint
-4. CORS Enabled: Configure allowed origins for production
-5. Memory-Only Upload: Files never touch disk, streamed directly to IPFS
-6. Admin Wallet: Used only for gasless faucet, not for user operations
-{% endhint %}
+1. **No Encryption Keys Stored**: Backend never sees decryption keys
+2. **x402 Verification**: Every upload/scan validated against blockchain
+3. **One-Time Faucet**: Prevents abuse via database uniqueness constraint
+4. **CORS Enabled**: Configure allowed origins for production
+5. **Memory-Only Upload**: Files never touch disk, streamed directly to IPFS
+6. **Admin Wallet**: Used only for gasless faucet, not for user operations
 
 ***
 
-For Frontend Integration: Use these endpoints to build the SentryGate user interface. All sensitive operations require valid x402 payment status from smart contract.
+> **For Frontend Integration**: Use these endpoints to build the SentryGate user interface. All sensitive operations require valid x402 payment status from smart contract.

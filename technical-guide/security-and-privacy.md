@@ -8,9 +8,38 @@ SentryGate is built upon a **Zero-Knowledge Architecture** foundation. Our secur
 
 ## Architecture Overview
 
-<figure><img src="../.gitbook/assets/Screenshot 2026-01-30 171153.png" alt=""><figcaption></figcaption></figure>
+```mermaid
+graph LR
+    subgraph "Client Side (Browser)"
+        A[Raw Document]
+        B[Web Crypto API]
+        C[AES-256-GCM]
+        D[Encrypted Blob]
+    end
+    
+    subgraph "Zero-Knowledge Barrier"
+        E[No Plaintext Crosses]
+    end
+    
+    subgraph "Backend/IPFS"
+        F[Encrypted Storage]
+        G[Cannot Decrypt]
+    end
+    
+    A -->|Encrypt| B
+    B -->|Generate| C
+    C -->|Output| D
+    D -->|Through| E
+    E -->|Store| F
+    F -.X.-|No Access| G
+    
+    style A fill:#90EE90
+    style D fill:#FFB6C1
+    style E fill:#FF6B6B
+    style G fill:#95A5A6
+```
 
-## Client-Side Cryptography (The "Black Box")
+## 1. Client-Side Cryptography (The "Black Box")
 
 All sensitive data is processed in an **isolated environment** within the user's browser.
 
@@ -33,7 +62,6 @@ Implementation:
 
 Code Example:
 
-{% code title="encrypt.js" %}
 ```javascript
 // Encrypt document
 const encryptedBlob = await crypto.subtle.encrypt(
@@ -46,7 +74,6 @@ const encryptedBlob = await crypto.subtle.encrypt(
   documentBuffer
 );
 ```
-{% endcode %}
 
 ### No Raw Data on Wire
 
@@ -54,31 +81,31 @@ Raw data (diplomas, ID cards, etc.) **is never sent to the internet**. What leav
 
 {% stepper %}
 {% step %}
-### Data Flow
+### Scan & Encrypt
 
 User scans document → Raw image in browser memory
 {% endstep %}
 
 {% step %}
-### Data Flow
+### Local Encryption
 
 Browser encrypts with AES-256-GCM → Ciphertext blob
 {% endstep %}
 
 {% step %}
-### Data Flow
+### Transmit Ciphertext
 
 Ciphertext sent to backend → **Never plaintext**
 {% endstep %}
 
 {% step %}
-### Data Flow
+### Store on IPFS
 
 Backend uploads to IPFS → **Still encrypted**
 {% endstep %}
 
 {% step %}
-### Data Flow
+### Immutable Storage
 
 IPFS stores forever → **Permanently encrypted**
 {% endstep %}
@@ -86,10 +113,10 @@ IPFS stores forever → **Permanently encrypted**
 
 Implementation References:
 
-* Scanner component: [`Scanner.tsx`](/broken/pages/e19c8765c1c0221d647f8fcba8c89066d1952773)
-* Upload API: Express `POST /api/upload` ([`index.js:130-168`](/broken/pages/85edd5b3e8bdce3655c8a35296ecad2471e47c0b#L130-L168))
+* Scanner component: [`Scanner.tsx`](/broken/pages/cf0bb4b8f750e5905b6aba8f9e78f1038ad114a2)
+* Upload API: Express `POST /api/upload` ([`index.js:130-168`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L130-L168))
 
-## Elimination of Master Passwords
+## 2. Elimination of Master Passwords
 
 SentryGate eliminates the human weakness of easily guessable passwords.
 
@@ -99,31 +126,31 @@ Your encryption key is **derived from your digital wallet signature**.
 
 {% stepper %}
 {% step %}
-### How It Works
+### Connect Wallet
 
 User connects wallet (Privy)
 {% endstep %}
 
 {% step %}
-### How It Works
+### Request Signature
 
 App requests signature: "Authorize SentryGate Vault"
 {% endstep %}
 
 {% step %}
-### How It Works
+### Wallet Signs
 
 Wallet signs message with private key
 {% endstep %}
 
 {% step %}
-### How It Works
+### Signature as Seed
 
 Signature used as high-entropy seed
 {% endstep %}
 
 {% step %}
-### How It Works
+### Derive Key
 
 Key derived using PBKDF2
 {% endstep %}
@@ -139,7 +166,7 @@ Benefits:
 
 Implementation:
 
-* Privy authentication: [`PrivyLoginButton.tsx`](/broken/pages/62ba76b20ebc0d74864f18be64dd19906bf3f57c)
+* Privy authentication: [`PrivyLoginButton.tsx`](/broken/pages/388c482f49324659d99cad0b7e2113c6b6148811)
 * Wallet signature via `personal_sign`
 
 ### PBKDF2 Stretched
@@ -163,7 +190,6 @@ Time to Crack (theoretical):
 
 Code Example:
 
-{% code title="deriveKey.js" %}
 ```javascript
 // Derive encryption key from signature
 const derivedKey = await crypto.subtle.deriveBits(
@@ -177,9 +203,8 @@ const derivedKey = await crypto.subtle.deriveBits(
   256
 );
 ```
-{% endcode %}
 
-## Data Sovereignty on IPFS
+## 3. Data Sovereignty on IPFS
 
 Even though files are stored on a public network (IPFS), that data remains **useless** to anyone without your key.
 
@@ -206,7 +231,7 @@ What We DON'T Store:
 Implementation:
 
 * Backend database: MySQL2 + MySQL
-* [`documents` table](/broken/pages/e6047c9b495603d1b775ec4ee39afef5e9c919ce)
+* [`documents` table](/broken/pages/d189efcd577a2767d7aba006e35cf4c9d61d0190)
 * No PII (Personally Identifiable Information)
 
 ### Censorship Resistance
@@ -224,8 +249,10 @@ IPFS Properties:
 Implementation:
 
 * Pinata pinning service
-* CID stored on-chain: [`Document.cid`](/broken/pages/ad38ed5c18808e117da1858db3150b6d07300831#L23)
+* CID stored on-chain: [`Document.cid`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L23)
 * Retrieval via IPFS gateway
+
+***
 
 ## Security Guarantees Table
 
@@ -238,6 +265,14 @@ Implementation:
 | **Censorship**     | ⚠️ Platform can delete     | ✅ IPFS decentralization       | Distributed storage          |
 | **Tampering**      | ⚠️ Files can be modified   | ✅ Auth tag + on-chain hash    | GCM mode + SHA-256           |
 | **Loss of Access** | ⚠️ Password forgotten      | ✅ Wallet signature            | Deterministic key derivation |
+
+***
+
+## Privacy-Preserving Architecture
+
+<figure><img src="../.gitbook/assets/mermaid-diagram-2026-01-31-161623.png" alt=""><figcaption></figcaption></figure>
+
+***
 
 ## Key Security Principles
 
@@ -278,9 +313,11 @@ Open and auditable:
 * Event emissions for all actions
 * Verifiable on-chain state
 
+***
+
 ## Security Best Practices for Users
 
-DO ✅
+### DO ✅
 
 * **Keep wallet private key secure** - It's your master key
 * **Verify contract addresses** - Always check on BaseScan
@@ -288,13 +325,15 @@ DO ✅
 * **Backup wallet seed phrase** - Store offline securely
 * **Verify IPFS CID** - Cross-check on-chain vs retrieved
 
-DON'T ❌
+### DON'T ❌
 
 * **Share wallet private key** - Never, ever
 * **Screenshot seed phrase** - No digital copies
 * **Use same wallet for trading** - Separate hot/cold wallets
 * **Trust unverified contracts** - Always verify source code
 * **Ignore transaction warnings** - Read MetaMask prompts
+
+***
 
 ## Compliance & Privacy
 
@@ -318,59 +357,83 @@ SentryGate does **NOT** collect:
 
 Only public wallet addresses (already on blockchain).
 
+***
+
 ## Smart Contract Security
 
-Implementation: [`SentryGate.sol`](/broken/pages/ad38ed5c18808e117da1858db3150b6d07300831)
+**Implementation**: [`SentryGate.sol`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf)
 
 ### Security Features
 
-1. **ReentrancyGuard**: [Line 8](/broken/pages/ad38ed5c18808e117da1858db3150b6d07300831#L8)
-   * Protects against reentrancy attacks
-   * Applied to all state-changing functions
-2. **Ownable**: [Line 8](/broken/pages/ad38ed5c18808e117da1858db3150b6d07300831#L8)
-   * Access control for admin functions
-   * Only owner can update fees
-3. **Custom Errors**: [Lines 16-19](/broken/pages/ad38ed5c18808e117da1858db3150b6d07300831#L16-L19)
-   * Gas-efficient error handling
-   * Clear revert reasons
-4. **Immutable Logic**:
-   * Once deployed, core logic cannot change
-   * Transparent and auditable
+{% stepper %}
+{% step %}
+### ReentrancyGuard
+
+[Line 8](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L8)\
+Protects against reentrancy attacks — applied to all state-changing functions.
+{% endstep %}
+
+{% step %}
+### Ownable
+
+[Line 8](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L8)\
+Access control for admin functions — only owner can update fees.
+{% endstep %}
+
+{% step %}
+### Custom Errors
+
+[Lines 16-19](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L16-L19)\
+Gas-efficient error handling with clear revert reasons.
+{% endstep %}
+
+{% step %}
+### Immutable Logic
+
+Once deployed, core logic cannot change — transparent and auditable.
+{% endstep %}
+{% endstepper %}
+
+***
 
 > **Security is not a feature, it's a mathematical certainty. Trust the cryptography, not the company.**
 
+***
+
 ## Audit Recommendations
+
+For production deployment, recommend:
 
 {% stepper %}
 {% step %}
 ### Smart Contract Audit
 
-OpenZeppelin, Trail of Bits, or Consensys Diligence
+Engage third-party auditors such as OpenZeppelin, Trail of Bits, or Consensys Diligence.
 {% endstep %}
 
 {% step %}
 ### Frontend Security Review
 
-Check Web Crypto API usage
+Check Web Crypto API usage and client-side implementation.
 {% endstep %}
 
 {% step %}
 ### Penetration Testing
 
-Test IPFS integration
+Test IPFS integration and end-to-end system resilience.
 {% endstep %}
 
 {% step %}
 ### Gas Optimization
 
-Reduce deployment and transaction costs
+Reduce deployment and transaction costs where possible.
 {% endstep %}
 
 {% step %}
 ### Formal Verification
 
-Prove contract correctness
+Prove contract correctness for critical logic.
 {% endstep %}
 {% endstepper %}
 
-Current Status: Hackathon prototype - NOT audited for production use.
+**Current Status**: Hackathon prototype - NOT audited for production use.

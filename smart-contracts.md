@@ -1,28 +1,28 @@
 ---
-icon: box-arrow-down-arrow-up
+icon: file-lock
 ---
 
-# SmartContracts
+# Smart Contracts
 
 The **SentryGate smart contract** is the decentralized core of the ecosystem. It serves as the primary enforcement layer for the **x402 Protocol**, managing localized payments via IDRX and providing immutable access control for the digital vault.
 
 Developed using the **Foundry framework** and written in **Solidity 0.8.24**, the contract is optimized for the Base network, ensuring minimal gas consumption for high-frequency access checks.
 
-**Contract File**: [`SentryGate.sol`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b)
+**Contract File**: [`SentryGate.sol`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf)
 
-## Architecture & Core Logic
+
+
+Architecture & Core Logic
 
 The contract operates on a **"Gatekeeper" model**. It acts as a bridge between the user's financial commitment and their data sovereignty.
 
-### The x402 Middleware Flow
+The x402 Middleware Flow
 
 {% stepper %}
 {% step %}
 ### Approval
 
 User grants allowance to SentryGate to spend IDRX.
-
-Example:
 
 ```solidity
 // Step 1: User approves IDRX token
@@ -35,8 +35,6 @@ IERC20(idrxToken).approve(sentryGateAddress, amount);
 
 Calling payment functions pulls tokens and updates the on-chain expiry.
 
-Example:
-
 ```solidity
 // Step 2: User pays for subscription or credits
 SentryGate.paySubscription(); // or buyCredits()
@@ -48,8 +46,6 @@ SentryGate.paySubscription(); // or buyCredits()
 
 Frontend/Backend query access verification to unlock vault features.
 
-Example:
-
 ```solidity
 // Step 3: App checks access
 (bool isActive, uint256 expiry, uint256 credits) = SentryGate.verifyPayment(userAddress);
@@ -57,7 +53,9 @@ Example:
 {% endstep %}
 {% endstepper %}
 
-## State Management
+
+
+State Management
 
 The contract maintains the following state variables on the Base network:
 
@@ -71,18 +69,20 @@ The contract maintains the following state variables on the Base network:
 | `uploadCredits` | `mapping(address => uint256)`    | `public`   | Number of upload credits per user                 |
 | `userDocuments` | `mapping(address => Document[])` | `private`  | Array of documents per user                       |
 
-**Implementation References**:
+Implementation References:
 
-* [`paymentToken`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L10)
-* [`feeRecipient`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L11)
-* [`subPrice` and `creditPrice`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L13-L14)
-* Mappings: [Lines 29-31](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L29-L31)
+* [`paymentToken`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L10)
+* [`feeRecipient`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L11)
+* [`subPrice` and `creditPrice`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L13-L14)
+* Mappings: [Lines 29-31](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L29-L31)
 
-## Function Reference
 
-### External Write Functions
 
-#### `paySubscription()`
+Function Reference
+
+External Write Functions
+
+paySubscription()
 
 The primary endpoint for users to activate or renew their vault subscription.
 
@@ -92,7 +92,7 @@ Signature:
 function paySubscription() external nonReentrant
 ```
 
-Implementation: [Lines 49-63](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L49-L63)
+Implementation: [Lines 49-63](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L49-L63)
 
 Requirements:
 
@@ -109,7 +109,7 @@ Events: `PaymentSuccess(address indexed user, string pType, uint256 timestamp)`
 
 Reverts: `PaymentFailed()` if token transfer fails
 
-#### `buyCredits()`
+buyCredits()
 
 Purchase upload credits for pay-per-use model.
 
@@ -119,7 +119,7 @@ Signature:
 function buyCredits() external nonReentrant
 ```
 
-Implementation: [Lines 65-71](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L65-L71)
+Implementation: [Lines 65-71](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L65-L71)
 
 Requirements:
 
@@ -133,7 +133,7 @@ Technical Logic:
 
 Events: `PaymentSuccess(address indexed user, string pType, uint256 timestamp)`
 
-#### `addDocument()`
+addDocument()
 
 Core function to add a document to the vault. **Requires active payment**.
 
@@ -143,7 +143,7 @@ Signature:
 function addDocument(string calldata _cid, string calldata _hash, string calldata _encName) external
 ```
 
-Implementation: [Lines 74-100](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L74-L100)
+Implementation: [Lines 74-100](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L74-L100)
 
 Parameters:
 
@@ -177,9 +177,9 @@ Reverts:
 
 Events: `DocumentAdded(address indexed user, string cid)`
 
-### View / Read Functions
+View / Read Functions
 
-#### `verifyPayment()`
+verifyPayment()
 
 The main validation endpoint used by frontend and backend.
 
@@ -189,7 +189,7 @@ Signature:
 function verifyPayment(address user) external view returns (bool isActive, uint256 expiry, uint256 credits)
 ```
 
-Implementation: [Lines 103-106](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L103-L106)
+Implementation: [Lines 103-106](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L103-L106)
 
 Returns:
 
@@ -205,7 +205,7 @@ Logic:
 isActive = (block.timestamp < subExpiry[user]) || (uploadCredits[user] > 0);
 ```
 
-#### `getMyDocs()`
+getMyDocs()
 
 Retrieve all documents for the caller.
 
@@ -215,15 +215,17 @@ Signature:
 function getMyDocs() external view returns (Document[] memory)
 ```
 
-Implementation: [Lines 108-110](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L108-L110)
+Implementation: [Lines 108-110](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L108-L110)
 
 Returns: Array of `Document` structs for `msg.sender`
 
-## &#x20;Events & Errors
+Events & Errors
 
-### Events
+<details>
 
-**`PaymentSuccess`** [Line 34](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L34):
+<summary>Events</summary>
+
+**`PaymentSuccess`** [Line 34](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L34):
 
 ```solidity
 event PaymentSuccess(address indexed user, string pType, uint256 timestamp);
@@ -231,7 +233,7 @@ event PaymentSuccess(address indexed user, string pType, uint256 timestamp);
 
 Logged every time a payment is confirmed (either subscription or credits).
 
-**`DocumentAdded`** [Line 35](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L35):
+**`DocumentAdded`** [Line 35](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L35):
 
 ```solidity
 event DocumentAdded(address indexed user, string cid);
@@ -239,9 +241,13 @@ event DocumentAdded(address indexed user, string cid);
 
 Logged when a document is successfully added to the vault.
 
-### Custom Errors
+</details>
 
-Implementation: [Lines 16-19](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L16-L19)
+<details>
+
+<summary>Custom Errors</summary>
+
+Implementation: [Lines 16-19](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L16-L19)
 
 | Error               | Condition                                    |
 | ------------------- | -------------------------------------------- |
@@ -249,43 +255,49 @@ Implementation: [Lines 16-19](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf
 | `PaymentRequired()` | No active subscription and no upload credits |
 | `InvalidCID()`      | Empty CID provided to `addDocument()`        |
 
-## Security & Integrity
+</details>
 
-### 1. Reentrancy Protection
+
+
+Security & Integrity
+
+1. Reentrancy Protection
 
 All token-handling functions use `nonReentrant` modifier.
 
 Implementation:
 
-* Contract inherits [`ReentrancyGuard`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L8)
+* Contract inherits [`ReentrancyGuard`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L8)
 * Applied to:
-  * [`paySubscription()`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L49)
-  * [`buyCredits()`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L65)
+  * [`paySubscription()`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L49)
+  * [`buyCredits()`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L65)
 
-### 2. Access Control
+2. Access Control
 
 Critical logic is protected by OpenZeppelin's `Ownable`.
 
 Implementation:
 
-* Contract inherits [`Ownable`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L8)
-* Owner set in constructor: [`Ownable(msg.sender)`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L37)
+* Contract inherits [`Ownable`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L8)
+* Owner set in constructor: [`Ownable(msg.sender)`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L37)
 
-### 3. Transparency
+3. Transparency
 
 Logic is based on `block.timestamp`, ensuring deterministic outcomes that can be verified by anyone.
 
-### 4. Gas Efficiency
+4. Gas Efficiency
 
 * Uses custom errors instead of string reverts (saves \~50 gas per error)
 * Efficient storage layout
 * View functions for read operations
 
-## Data Structures
 
-### `Document` Struct
 
-Implementation: [Lines 22-27](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L22-L27)
+Data Structures
+
+Document Struct
+
+Implementation: [Lines 22-27](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L22-L27)
 
 ```solidity
 struct Document {
@@ -296,17 +308,17 @@ struct Document {
 }
 ```
 
-## Contract Deployment
+Contract Deployment
 
-### Dependencies
+Dependencies
 
-**OpenZeppelin Contracts**:
+OpenZeppelin Contracts:
 
-* [`Ownable`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L4) - Access control
-* [`IERC20`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L5) - Token interface
-* [`ReentrancyGuard`](/broken/pages/8f7d667bff6b594e05950d98c48f26e8a2bf7c4b#L6) - Security
+* [`Ownable`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L4) - Access control
+* [`IERC20`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L5) - Token interface
+* [`ReentrancyGuard`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L6) - Security
 
-### Constructor Parameters
+Constructor Parameters
 
 ```solidity
 constructor(address _token, address _recipient) Ownable(msg.sender)
@@ -315,16 +327,16 @@ constructor(address _token, address _recipient) Ownable(msg.sender)
 * `_token`: Address of IDRX token contract
 * `_recipient`: Address receiving payment fees
 
-### Network
+Network
 
 * **Base Sepolia Testnet** (Chain ID: 84532)
 * Optimized for Base L2 efficiency
 
-## Testing
+Testing
 
-**Framework**: Foundry
+Framework: Foundry
 
-**Test Commands**:
+Test Commands:
 
 ```bash
 # Build
@@ -337,6 +349,6 @@ forge test -vv
 forge coverage
 ```
 
-**Test File**: [`Counter.t.sol`](/broken/pages/204a5f4b808feeff847e9ddbb515899b1388fc50)
+Test File: [`Counter.t.sol`](/broken/pages/b048f78a64bd1c702343e4721b6943c22438cdf0)
 
-> **Security First**: Every function is designed with security and gas efficiency in mind, ensuring that the x402 protocol operates reliably and affordably on Base.
+Security First: Every function is designed with security and gas efficiency in mind, ensuring that the x402 protocol operates reliably and affordably on Base.

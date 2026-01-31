@@ -1,12 +1,8 @@
 ---
-icon: arrow-progress
+icon: gears
 ---
 
 # How It Works
-
-SentryGate is designed to be a **"Zero-Trust" environment**. The platform orchestrates a complex dance between blockchain identity, client-side cryptography, and decentralized storage to ensure that your documents are always secure and always yours.
-
-The lifecycle of a document within SentryGate follows a strict five-stage process:
 
 {% stepper %}
 {% step %}
@@ -20,8 +16,8 @@ Immediately upon connection, the frontend triggers an on-chain query to the Sent
 
 Implementation:
 
-* Privy authentication: [`PrivyLoginButton.tsx`](/broken/pages/3715ebda911ed2e71dfd6a29aa8988b40cbb66a1)
-* Providers setup: [`providers.tsx`](/broken/pages/0b06cf7b804a53bc526c8380e8147fc1df249f57)
+* Privy authentication: [`PrivyLoginButton.tsx`](/broken/pages/388c482f49324659d99cad0b7e2113c6b6148811)
+* Providers setup: [`providers.tsx`](/broken/pages/8c936631e8f20dbf5f89e3b7b504dc60ebe8f983)
 * Privy config with Base Sepolia chain
 
 #### The "Gate"
@@ -30,7 +26,7 @@ If the contract returns `false` (meaning no active x402 session), the user is pr
 
 Implementation:
 
-* Access verification: [`verifyPayment()` function](/broken/pages/91437dd5da0e9d759eb8550401d70243f80c16d8#L103-L106)
+* Access verification: [`verifyPayment()` function](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L103-L106)
 * Returns: `(isActive, expiry, credits)`
 * Logic: `isActive = (block.timestamp < subExpiry[user]) || (uploadCredits[user] > 0)`
 
@@ -41,9 +37,9 @@ Once a payment in **IDRX** is confirmed on the Base network, the smart contract 
 Implementation:
 
 * Payment functions:
-  * [`paySubscription()`](/broken/pages/91437dd5da0e9d759eb8550401d70243f80c16d8#L49-L63) - Updates `subExpiry[msg.sender]`
-  * [`buyCredits()`](/broken/pages/91437dd5da0e9d759eb8550401d70243f80c16d8#L65-L71) - Increments `uploadCredits[msg.sender] += 5`
-* IDRX token integration: [`MockIDRX.sol`](/broken/pages/6325a8aaa94f29945881a344383281859bda6372)
+  * [`paySubscription()`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L49-L63) - Updates `subExpiry[msg.sender]`
+  * [`buyCredits()`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L65-L71) - Increments `uploadCredits[msg.sender] += 5`
+* IDRX token integration: [`MockIDRX.sol`](/broken/pages/2f634951ccfbb28bd2d6dfcaa4f3d190090af9e7)
 {% endstep %}
 
 {% step %}
@@ -57,9 +53,9 @@ The component uses the `navigator.mediaDevices.getUserMedia` API to access the c
 
 Implementation:
 
-* Scanner component: [`Scanner.tsx`](/broken/pages/5ac63d4e94e084caaf86eed60b6b52353a2ea189)
+* Scanner component: [`Scanner.tsx`](/broken/pages/cf0bb4b8f750e5905b6aba8f9e78f1038ad114a2)
 * React-webcam library integration (dependency in package.json)
-* Scan page: [`/scan/page.tsx`](/broken/pages/5bce23f5d7ef451c078c3fd1da98d6f545c79537)
+* Scan page: [`/scan/page.tsx`](/broken/pages/0c066dba17c6fcae836219c5d9fa4ff00f7145f3)
 
 #### Optimized Processing
 
@@ -110,7 +106,7 @@ The backend acts as a secure relay to **Pinata**. The file is uploaded to the **
 
 Implementation:
 
-* Upload API endpoint: Express `POST /api/upload` ([`index.js:130-168`](/broken/pages/63951f5c3085e8fbecacbbfbaa74a361a3127370#L130-L168))
+* Upload API endpoint: Express `POST /api/upload` ([`index.js:130-168`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L130-L168))
 * Pinata integration for IPFS pinning
 * Returns CID (Content Identifier)
 
@@ -119,43 +115,54 @@ Implementation:
 IPFS returns a **Content Identifier (CID)**—a unique cryptographic hash representing the file. This CID is then:
 
 * Stored in **MySQL database** via MySQL2 connection pool
-* Posted to smart contract via [`addDocument()`](/broken/pages/91437dd5da0e9d759eb8550401d70243f80c16d8#L74-L100)
+* Posted to smart contract via [`addDocument()`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L74-L100)
 * Associated with the user's wallet address on-chain
 
 Implementation:
 
-* Backend database: MySQL2 connection pool ([`index.js:25-33`](/broken/pages/63951f5c3085e8fbecacbbfbaa74a361a3127370#L25-L33))
-* Database tables: [`migrate.js`](/broken/pages/8a22a254d174942df801d62a60f6a65dd8c298fe)
-* On-chain storage in [`userDocuments` mapping](/broken/pages/91437dd5da0e9d759eb8550401d70243f80c16d8#L29)
+* Backend database: MySQL2 connection pool ([`index.js:25-33`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L25-L33))
+* Database tables: [`migrate.js`](/broken/pages/d189efcd577a2767d7aba006e35cf4c9d61d0190)
+* On-chain storage in [`userDocuments` mapping](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L29)
 {% endstep %}
 
 {% step %}
 ### Secure Retrieval & Decryption
 
-When a user visits their **Vault Gallery**:
+When a user visits their **Vault Gallery**, the system retrieves encrypted CIDs and decrypts blobs in-memory without persisting raw documents to disk.
 
 #### Retrieval Process
 
-* The app fetches the list of encrypted CIDs from the backend
-* The browser downloads the encrypted blob directly from the IPFS gateway
-* The app uses the cached master key (from the earlier login signature) to decrypt the blob in-memory
-* An ephemeral Blob URL is created for viewing, ensuring that the decrypted file is never stored permanently on the local disk
+{% stepper %}
+{% step %}
+Fetch CID list from backend (encrypted CIDs associated with the user's wallet).
+{% endstep %}
+
+{% step %}
+Download the encrypted blob directly from the IPFS gateway in the browser.
+{% endstep %}
+
+{% step %}
+Use the cached master key (derived from the earlier login signature) to decrypt the blob in-memory.
+{% endstep %}
+
+{% step %}
+Create an ephemeral Blob URL for viewing so the decrypted file is never stored permanently on local disk.
+{% endstep %}
+{% endstepper %}
 
 Implementation:
 
-* My files API: Express `GET /api/documents/:walletAddress` ([`index.js:199-209`](/broken/pages/63951f5c3085e8fbecacbbfbaa74a361a3127370#L199-L209))
-* Vault page: [`/vault/page.tsx`](/broken/pages/ff7cd156baa7351435b8874dc28bdb1eb0efad4a)
-* On-chain verification via [`getMyDocs()`](/broken/pages/91437dd5da0e9d759eb8550401d70243f80c16d8#L108-L110)
+* My files API: Express `GET /api/documents/:walletAddress` ([`index.js:199-209`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L199-L209))
+* Vault page: [`/vault/page.tsx`](/broken/pages/5d7727fd31d02364db597baf8dc5e92b71bdd0ce)
+* On-chain verification via [`getMyDocs()`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L108-L110)
 {% endstep %}
 {% endstepper %}
 
 ***
 
-## Workflow Summary
+### Workflow Summary
 
-<figure><img src=".gitbook/assets/Screenshot 2026-01-30 164059.png" alt=""><figcaption></figcaption></figure>
-
-***
+<figure><img src=".gitbook/assets/mermaid-diagram-2026-01-31-161205.png" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
 Zero-Trust Architecture: At no point does SentryGate have access to your unencrypted documents. The platform operates purely on encrypted data and on-chain proofs.

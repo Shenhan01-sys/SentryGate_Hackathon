@@ -10,7 +10,7 @@ SentryGate is a sophisticated **On-chain Mini App ecosystem** architected on the
 
 At its core, SentryGate is more than a storage solution—it is a **Self-Sovereign Security Protocol**. By leveraging the **x402 protocol** as a smart middleware and the **IDRX stablecoin** as an economic anchor, SentryGate provides a seamless, retail-ready experience for users who demand absolute control over their digital legacy.
 
-## The Technical Philosophy : "Privacy by Design"
+## The Technical Philosophy: "Privacy by Design"
 
 SentryGate is built on the principle that **mathematical proof is superior to institutional trust**. Our architecture is designed to ensure that the platform provides its service without ever having access to the raw content of the data being processed.
 
@@ -32,8 +32,8 @@ SentryGate is natively optimized for the **Base ecosystem**. We utilize Base's h
 
 Implementation Reference:
 
-* Smart Contract deployed on Base Sepolia: [`SentryGate.sol`](/broken/pages/245d67e9d4437d2cfbcb760c49dce0c5fa9a3840)
-* Frontend Base configuration: [`providers.tsx`](/broken/pages/5c1c3fcad53e89cb6902f5471992557cce4eeef3)
+* Smart Contract deployed on Base Sepolia: [`SentryGate.sol`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf)
+* Frontend Base configuration: [`providers.tsx`](/broken/pages/8c936631e8f20dbf5f89e3b7b504dc60ebe8f983)
 {% endstep %}
 
 {% step %}
@@ -46,8 +46,8 @@ We utilize the **x402 protocol** to automate the "Gatekeeping" process. This all
 
 Implementation Reference:
 
-* Payment verification logic: [`SentryGate.sol:L103-106`](/broken/pages/245d67e9d4437d2cfbcb760c49dce0c5fa9a3840#L103-L106) - `verifyPayment()` function
-* Access enforcement: [`SentryGate.sol:L74-90`](/broken/pages/245d67e9d4437d2cfbcb760c49dce0c5fa9a3840#L74-L90) - `addDocument()` with PaymentRequired error
+* Payment verification logic: [`SentryGate.sol:L103-106`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L103-L106) - `verifyPayment()` function
+* Access enforcement: [`SentryGate.sol:L74-90`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L74-L90) - `addDocument()` with PaymentRequired error
 {% endstep %}
 
 {% step %}
@@ -57,9 +57,9 @@ Recognizing the volatility inherent in native crypto assets, SentryGate integrat
 
 Implementation Reference:
 
-* IDRX Token Contract: [`MockIDRX.sol`](/broken/pages/75ef4f008bf0a59b3987963fb42e0280aec02105)
-* Payment token configuration: [`SentryGate.sol:L10`](/broken/pages/245d67e9d4437d2cfbcb760c49dce0c5fa9a3840#L10) - `IERC20 public paymentToken`
-* Pricing (2 decimals): [`SentryGate.sol:L44-45`](/broken/pages/245d67e9d4437d2cfbcb760c49dce0c5fa9a3840#L44-L45)
+* IDRX Token Contract: [`MockIDRX.sol`](/broken/pages/2f634951ccfbb28bd2d6dfcaa4f3d190090af9e7)
+* Payment token configuration: [`SentryGate.sol:L10`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L10) - `IERC20 public paymentToken`
+* Pricing (2 decimals): [`SentryGate.sol:L44-45`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L44-L45)
   * Subscription: 50,000 IDRX (30 days)
   * Credits: 10,000 IDRX (5 uploads)
 {% endstep %}
@@ -71,8 +71,8 @@ Our storage layer is as decentralized as our logic. Using **IPFS via Pinata**, w
 
 Implementation Reference:
 
-* Frontend scanner: [`Scanner.tsx`](/broken/pages/e4fc92fb2256b60f62aac281f0e8dae260108c38)
-* Backend upload API: Express `POST /api/upload` ([`index.js:130-168`](/broken/pages/b1af46e11e70efc86e3967afef875f6e89cdd805#L130-L168))
+* Frontend scanner: [`Scanner.tsx`](/broken/pages/cf0bb4b8f750e5905b6aba8f9e78f1038ad114a2)
+* Backend upload API: Express `POST /api/upload` ([`index.js:130-168`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L130-L168))
 {% endstep %}
 {% endstepper %}
 
@@ -84,4 +84,6 @@ SentryGate serves the modern digital citizen who requires absolute certainty in 
 * **Freelance Security**: Independent professionals can secure immutable proofs of work and legal agreements.
 * **Enterprise Resilience**: Small businesses can safeguard NIBs, deeds, and tax records against local hardware failure or centralized cloud outages.
 
-> "Your digital life is off-chain, but your security should be on-chain. Trust the mathematics. Trust SentryGate."
+{% hint style="info" %}
+"Your digital life is off-chain, but your security should be on-chain. Trust the mathematics. Trust SentryGate."
+{% endhint %}

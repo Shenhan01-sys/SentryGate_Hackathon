@@ -1,8 +1,10 @@
 ---
-icon: star
+icon: gear-complex
 ---
 
 # Core Features
+
+SentryGate dirancang sebagai sebuah **Secure Onchain Vault** yang menggabungkan kemudahan pemindaian dokumen dengan keamanan kriptografi tingkat tinggi. Berikut adalah fitur-fitur inti yang menjadi fondasi utama dari ekosistem SentryGate:
 
 {% stepper %}
 {% step %}
@@ -14,23 +16,23 @@ Fitur utama SentryGate adalah **brankas digital pribadi** yang berfungsi untuk m
 
 Setiap dokumen yang diunggah dikaitkan secara permanen dengan alamat dompet pengguna, menciptakan bukti kepemilikan yang tidak dapat dibantah.
 
-Implementation:
+**Implementation**:
 
-* [`userDocuments` mapping](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L29) - `mapping(address => Document[])` links documents to wallet address
-* [`getMyDocs()` function](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L108-L110) - returns all documents for `msg.sender`
+* [`userDocuments` mapping](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L29) - `mapping(address => Document[])` links documents to wallet address
+* [`getMyDocs()` function](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L108-L110) - returns all documents for `msg.sender`
 
 #### Metadata Integrity
 
 Metadata dokumen (nama, kategori, timestamp) dicatat di blockchain untuk memastikan jejak sejarah dokumen tetap utuh dan transparan.
 
-Implementation:
+**Implementation**:
 
-* [`Document` struct](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L22-L27):
+* [`Document` struct](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L22-L27):
   * `cid` - IPFS content identifier
   * `docHash` - SHA-256 integrity hash
   * `encryptedName` - Encrypted document name
   * `timestamp` - Block timestamp
-* [`DocumentAdded` event](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L35) - emits CID on successful upload
+* [`DocumentAdded` event](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L35) - emits CID on successful upload
 {% endstep %}
 
 {% step %}
@@ -42,9 +44,9 @@ Keamanan adalah prioritas mutlak (**Security First**). SentryGate memastikan bah
 
 Dokumen dienkripsi secara lokal di perangkat pengguna sebelum proses pengunggahan dimulai.
 
-Implementation:
+**Implementation**:
 
-* Frontend scanner component: [`Scanner.tsx`](/broken/pages/aab320d084ad6d94b1436f89c4a4f9e989de4b00)
+* Frontend scanner component: [`Scanner.tsx`](/broken/pages/cf0bb4b8f750e5905b6aba8f9e78f1038ad114a2)
 * Web Crypto API for AES-256-GCM encryption
 * Encryption happens in browser before upload
 
@@ -62,12 +64,11 @@ SentryGate mengintegrasikan protokol **x402** sebagai lapisan middleware untuk m
 
 Sistem bertindak sebagai penjaga gerbang yang memverifikasi status pembayaran pengguna secara otomatis di jaringan Base sebelum mengizinkan hit API untuk proses upload.
 
-Implementation:
+**Implementation**:
 
-* [`addDocument()` function](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L74-L100) - enforces payment verification
+* [`addDocument()` function](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L74-L100) - enforces payment verification
 * Logic checks (lines 78-90):
 
-{% code title="Solidity (snippet)" %}
 ```solidity
 bool isSubscribed = block.timestamp < subExpiry[msg.sender];
 bool hasCredits = uploadCredits[msg.sender] > 0;
@@ -82,17 +83,16 @@ if (isSubscribed) {
     revert PaymentRequired();
 }
 ```
-{% endcode %}
 
 #### Seamless Subscription
 
 Memberikan pengalaman pay-per-use atau langganan yang sepenuhnya on-chain, otomatis, dan transparan tanpa perlu verifikasi manual dari admin.
 
-Implementation:
+**Implementation**:
 
-* [`paySubscription()`](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L49-L63) - 30 days access for 50,000 IDRX
-* [`buyCredits()`](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L65-L71) - 5 uploads for 10,000 IDRX
-* [`PaymentSuccess` event](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L34) - transparent payment tracking
+* [`paySubscription()`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L49-L63) - 30 days access for 50,000 IDRX
+* [`buyCredits()`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L65-L71) - 5 uploads for 10,000 IDRX
+* [`PaymentSuccess` event](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L34) - transparent payment tracking
 {% endstep %}
 
 {% step %}
@@ -104,9 +104,9 @@ Untuk menjamin persistensi data, SentryGate tidak menggunakan server penyimpanan
 
 Menggunakan **Pinata (IPFS)** untuk penyimpanan file yang tahan sensor (censorship-resistant).
 
-Implementation:
+**Implementation**:
 
-* Backend upload API: Express `POST /api/upload` ([`index.js:130-168`](/broken/pages/ec1bab127814221fac6a365d0b346fc39829f66f#L130-L168))
+* Backend upload API: Express `POST /api/upload` ([`index.js:130-168`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L130-L168))
 * Uses Pinata API via Axios for IPFS pinning
 * MySQL database stores CID mapping to user addresses
 
@@ -114,10 +114,10 @@ Implementation:
 
 Setiap file diidentifikasi melalui **CID (Content Identifier)** yang unik, menjamin bahwa file yang Anda ambil selalu identik dengan file yang Anda simpan tanpa ada modifikasi pihak ketiga.
 
-Implementation:
+**Implementation**:
 
-* CID stored on-chain in [`Document.cid`](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L23)
-* Document retrieval API: Express `GET /api/documents/:walletAddress` ([`index.js:199-209`](/broken/pages/ec1bab127814221fac6a365d0b346fc39829f66f#L199-L209))
+* CID stored on-chain in [`Document.cid`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L23)
+* Document retrieval API: Express `GET /api/documents/:walletAddress` ([`index.js:199-209`](/broken/pages/b1724c0a8483ef82a35b32509fcfc9371588b5c1#L199-L209))
 {% endstep %}
 
 {% step %}
@@ -133,21 +133,23 @@ Biaya transaksi yang sangat rendah memungkinkan pengguna untuk mencatat metadata
 
 Meskipun efisien, SentryGate tetap mewarisi standar keamanan dan desentralisasi yang setara dengan ekosistem Ethereum.
 
-Implementation:
+**Implementation**:
 
 * Deployed on Base Sepolia testnet
-* ReentrancyGuard protection: [`ReentrancyGuard`](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L8)
-* Ownable access control: [`Ownable`](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L8)
-* Custom errors for gas efficiency: [`PaymentFailed()`, `PaymentRequired()`, `InvalidCID()`](/broken/pages/dd6f1be42d4c58089722ac8567ca8e3b7848353c#L16-L19)
+* ReentrancyGuard protection: [`ReentrancyGuard`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L8)
+* Ownable access control: [`Ownable`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L8)
+* Custom errors for gas efficiency: [`PaymentFailed()`, `PaymentRequired()`, `InvalidCID()`](/broken/pages/4869e85afa8d9ca7b5661354ccf1802cdac368cf#L16-L19)
 {% endstep %}
 {% endstepper %}
 
-### Summary
+***
+
+## Summary
 
 SentryGate combines:
 
-* ✅ Zero-Knowledge Encryption - Client-side AES-256-GCM
-* ✅ On-Chain Access Control - x402 middleware with IDRX payments
-* ✅ Decentralized Storage - IPFS via Pinata
-* ✅ Identity Anchoring - Wallet-based ownership
-* ✅ Base Optimization - Low fees, high security
+* **Zero-Knowledge Encryption** - Client-side AES-256-GCM
+* **On-Chain Access Control** - x402 middleware with IDRX payments
+* **Decentralized Storage** - IPFS via Pinata
+* **Identity Anchoring** - Wallet-based ownership
+* **Base Optimization** - Low fees, high security
